@@ -7,7 +7,7 @@ import os
 
 # Função para obter a conexão com o banco de dados PostgreSQL
 async def get_database():
-    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/estoque_roupas")
+    DATABASE_URL = os.environ.get("PGURL", "postgres://postgres:postgres@db:5432/roupas")
     return await asyncpg.connect(DATABASE_URL)
 
 # Inicializar a aplicação FastAPI
@@ -19,6 +19,7 @@ class Roupa(BaseModel):
     categoria: str  # Ex.: camisetas, calças
     marca: str
     tamanho: str  # Ex.: P, M, G, GG
+    cor: str
     quantidade: int
     valor_unitario: float
 
@@ -26,6 +27,7 @@ class RoupaBase(BaseModel):
     categoria: str
     marca: str
     tamanho: str
+    cor: str
     quantidade: int
     valor_unitario: float
 
@@ -53,9 +55,13 @@ async def log_requests(request: Request, call_next):
 async def adicionar_roupa(roupa: RoupaBase):
     conn = await get_database()
     try:
-        query = "INSERT INTO roupas (categoria, marca, tamanho, quantidade, valor_unitario) VALUES ($1, $2, $3, $4, $5)"
+        query = """
+            INSERT INTO roupas (categoria, marca, tamanho, cor, quantidade, valor_unitario)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """
         async with conn.transaction():
-            await conn.execute(query, roupa.categoria, roupa.marca, roupa.tamanho, roupa.quantidade, roupa.valor_unitario)
+            # Aqui você está passando 6 valores, que são os parâmetros de acordo com a ordem das colunas
+            await conn.execute(query, roupa.categoria, roupa.marca, roupa.tamanho, roupa.cor, roupa.quantidade, roupa.valor_unitario)
             return {"message": "Roupa adicionada com sucesso!"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Falha ao adicionar a roupa: {str(e)}")
@@ -106,7 +112,7 @@ async def vender_roupa(roupa_id: int, venda: VendaRoupa):
 
         valor_venda = roupa['valor_unitario'] * venda.quantidade
         insert_venda_query = """
-            INSERT INTO vendas (item_id, quantidade_vendida, valor_venda) 
+            INSERT INTO vendas (roupa_id, quantidade_vendida, valor_venda) 
             VALUES ($1, $2, $3)
         """
         await conn.execute(insert_venda_query, roupa_id, venda.quantidade, valor_venda)
@@ -175,7 +181,7 @@ async def resetar_roupas():
         with open(init_sql, 'r') as file:
             sql_commands = file.read()
         await conn.execute(sql_commands)
-        return {"message": "Repositório de roupas resetado com sucesso!"}
+        return {"message": "Estoque de roupas resetado com sucesso!"}
     finally:
         await conn.close()
 
@@ -187,7 +193,7 @@ async def listar_vendas():
         query = """
             SELECT vendas.id, roupas.categoria, roupas.marca, roupas.tamanho, vendas.quantidade_vendida, vendas.valor_venda, vendas.data_venda
             FROM vendas
-            JOIN roupas ON vendas.item_id = roupas.id
+            JOIN roupas ON vendas.roupa_id = roupas.id
         """
         rows = await conn.fetch(query)
         vendas = [dict(row) for row in rows]
