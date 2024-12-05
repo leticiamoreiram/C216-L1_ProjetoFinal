@@ -3,10 +3,10 @@ DROP TABLE IF EXISTS "roupas";
 
 CREATE TABLE "roupas" (
     "id" SERIAL PRIMARY KEY,
-    "categoria" VARCHAR(255) NOT NULL, -- Ex: Camisetas, Calças
+    "categoria" VARCHAR(255) NOT NULL, 
     "marca" VARCHAR(255) NOT NULL,
-    "tamanho" VARCHAR(10) NOT NULL,    -- Ex: P, M, G
-    "cor" VARCHAR(50) NOT NULL,        -- Ex: Azul, Preto
+    "tamanho" VARCHAR(10) NOT NULL,    
+    "cor" VARCHAR(50) NOT NULL,        
     "quantidade" INTEGER NOT NULL,
     "valor_unitario" FLOAT NOT NULL
 );
@@ -20,6 +20,7 @@ CREATE TABLE "vendas" (
 );
 
 INSERT INTO "roupas" ("categoria", "marca", "tamanho", "cor", "quantidade", "valor_unitario") 
-VALUES ('Camiseta', 'Nike', 'M', 'Preto', 30, 120.00);
+VALUES ('Camiseta', 'Nike', 'M', 'Preto', 30, 120);
+
 INSERT INTO "roupas" ("categoria", "marca", "tamanho", "cor", "quantidade", "valor_unitario") 
-VALUES ('Calça', 'Adidas', 'G', 'Azul', 20, 200.00);
+VALUES ('Calça', 'Adidas', 'G', 'Azul', 20, 200);
