@@ -19,3 +19,8 @@ CREATE TABLE "vendas" (
     "data_venda" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+INSERT INTO "roupas" ("categoria", "marca", "tamanho", "cor", "quantidade", "valor_unitario") 
+VALUES ('Camiseta', 'Nike', 'M', 'Preto', 30, 120);
+
+INSERT INTO "roupas" ("categoria", "marca", "tamanho", "cor", "quantidade", "valor_unitario") 
+VALUES ('Calça', 'Adidas', 'G', 'Azul', 20, 200);
