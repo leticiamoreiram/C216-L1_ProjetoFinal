@@ -44,7 +44,8 @@
                         <td>{{ venda.marca }}</td>
                         <td>{{ venda.quantidade_vendida }}</td>
                         <td>R$ {{ venda.valor_venda  }}</td>
-                        <td>{{ venda.data_venda }}</td>
+                        <td>{{ venda.data_venda[:10].split('-')|reverse|join('/') }} {{ venda.data_venda[11:16] }}</td>
+
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -55,9 +56,6 @@
                     </tr>
                 </tfoot>
             </table>
-        </div>
-        <div class="text-end mt-3">
-            <a href="/exportar-vendas" class="btn btn-info">Exportar como CSV</a>
         </div>
         {% else %}
         <p class="text-center">Nenhuma venda encontrada.</p>
